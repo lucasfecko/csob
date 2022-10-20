@@ -1923,6 +1923,14 @@ class Client {
 			unset($responseWithoutSignature["signature"]);
 		}
 
+        /**
+         * https://github.com/csob/paymentgateway/wiki/Request-Signing-and-Response-Signature-Validation
+         * Note: In general, the parameters paymentStatus, authCode and merchantData are added to the signature verification string only if these are filled in
+         * (e.g. for a payment in state 3 the authCode will not be filled in but the parameter merchantData, the resulting string will then be in the format
+         * payId|dttm|resultCode|resultMessage|paymentStatus|merchantData).
+         */
+        $responseWithoutSignature = array_filter($responseWithoutSignature);
+
 		if ($responseFieldsOrder) {
 			$string = Crypto::createSignatureBaseWithOrder($responseWithoutSignature, $responseFieldsOrder, false);
 		} else {
